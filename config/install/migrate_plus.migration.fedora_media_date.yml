@@ -1,0 +1,60 @@
+## Update Media Revisions date after creation.
+## Cannot be done as single step as value gets overridden by insert hook.
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_plus
+      - islandora
+id: fedora_media_date
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: fedora
+label: 'Media Date'
+source:
+  plugin: csv
+  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/media.csv
+  track_changes: true
+  header_row_count: 1
+  keys:
+    - pid
+    - dsid
+    # The version is not a key as the media entity itself should always be the
+    # latest version, it is used as a key for revisions though, see 'Media of Revisions'.
+process:
+  mid:
+    plugin: migration_lookup
+    migration: fedora_media
+    source:
+      - pid
+      - dsid
+  revision_user:
+    -
+      plugin: migration_lookup
+      migration: fedora_users
+      source: user
+      no_stub: true
+    # If not found in the migration it must be the admin user as this is the
+    # only user not migrated from the original site.
+    -
+      plugin: default_value
+      default_value: 1
+  revision_created:
+    plugin: format_date
+    from_format: 'Y-m-d\TH:i:sP'
+    to_format: U
+    source: created_date
+    settings:
+      validate_format: false
+destination:
+  plugin: 'entity:media'
+  overwrite_properties:
+    - revision_user
+    - revision_created
+migration_dependencies:
+  required:
+    - fedora_media
+  optional: { }

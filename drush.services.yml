@@ -1,0 +1,6 @@
+services:
+  islandora.commands:
+    class: \Drupal\islandora_migrate_fedora_feature\Commands\ImportParallelCommands
+    arguments: ['@plugin.manager.migration']
+    tags:
+      - { name: drush.command }

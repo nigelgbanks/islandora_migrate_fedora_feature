@@ -1,0 +1,105 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_plus
+      - islandora
+id: fedora_media_revisions
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: fedora
+label: 'Media Revisions'
+source:
+  plugin: csv
+  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/media_revisions.csv
+  track_changes: true
+  header_row_count: 1
+  keys:
+    - pid
+    - dsid
+    - version
+process:
+  mid:
+    plugin: migration_lookup
+    migration: fedora_media
+    source:
+      - pid
+      - dsid
+  name: name
+  uid:
+    -
+      plugin: migration_lookup
+      migration: fedora_users
+      source: user
+      no_stub: true
+    # If not found in the migration it must be the admin user as this is the
+    # only user not migrated from the original site.
+    -
+      plugin: default_value
+      default_value: 1
+  revision_user: '@uid'
+  created:
+    plugin: format_date
+    from_format: 'Y-m-d\TH:i:sP'
+    to_format: U
+    source: created_date
+    settings:
+      validate_format: false
+  bundle: bundle
+  field_file_size: file_size
+  field_original_name: label
+  field_media_image/alt: label
+  field_media_image/title: label
+  field_mime_type: mime_type
+  field_media_use:
+    -
+      plugin: static_map
+      source: dsid
+      map:
+        AUDIT: http://islandora.ca/audit-trail
+        COLLECTION_POLICY: http://islandora.ca/collection-policy
+        DC: http://purl.org/dc/elements/1.1
+        FULL_TEXT: http://pcdm.org/use#ExtractedText
+        HOCR: http://pcdm.org/use#ExtractedText
+        JP2: http://pcdm.org/use#IntermediateFile
+        JPG: http://pcdm.org/use#ServiceFile
+        MEDIUM_SIZE: http://pcdm.org/use#ServiceFile
+        MKV: http://pcdm.org/use#IntermediateFile
+        MODS: http://www.loc.gov/mods/v3
+        MP4: http://pcdm.org/use#ServiceFile
+        OBJ: http://pcdm.org/use#OriginalFile
+        OCR: http://pcdm.org/use#ExtractedText
+        PDFA: http://pcdm.org/use#PreservationMasterFile
+        PREVIEW: http://pcdm.org/use#ServiceFile
+        PROXY_MP3: http://pcdm.org/use#ServiceFile
+        RELS-EXT: http://islandora.ca/ontology/relsext
+        TECHMD: https://projects.iq.harvard.edu/fits
+        TN: http://pcdm.org/use#ThumbnailImage
+      default_value: Datastream
+    -
+      plugin: entity_lookup
+      value_key: field_external_uri
+      bundle_key: vid
+      bundle: islandora_media_use
+      entity_type: taxonomy_term
+      ignore_case: true
+destination:
+  plugin: 'entity_revision:media'
+  overwrite_properties:
+    - name
+    - uid
+    - created
+    - bundle
+    - field_file_size
+    - field_original_name
+    - field_media_image
+    - field_mime_type
+    - field_media_use
+migration_dependencies:
+  required:
+    - fedora_media
+    - fedora_users
+  optional: { }

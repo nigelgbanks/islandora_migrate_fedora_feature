@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_plus
+      - islandora
+id: fedora
+label: 'Fedora Objects'
+description: 'Migration configuration for migrating from Fedora 3 Repository'
+source_type: Anything
+module: null
+shared_configuration: null

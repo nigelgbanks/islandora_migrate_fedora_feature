@@ -1,0 +1,334 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_plus
+      - islandora
+id: fedora_node_fields
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: fedora
+label: 'Node Fields'
+source:
+  plugin: csv
+  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/fields.csv
+  track_changes: true
+  header_row_count: 1
+  keys:
+    - pid
+process:
+  nid:
+    plugin: migration_lookup
+    migration: fedora_nodes
+    source:
+      - pid
+  # Temp properties referenced in field_subject_name, aggregate from multiple taxonomies.
+  temp_corporate:
+    -
+      plugin: explode
+      source: field_subject_name
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_corporate
+      no_stub: true
+  temp_family:
+    -
+      plugin: explode
+      source: field_subject_name
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_family
+      no_stub: true
+  temp_person:
+    -
+      plugin: explode
+      source: field_subject_name
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_person
+      no_stub: true
+  # Actual fields to set values on.
+  field_access:
+    -
+      plugin: explode
+      source: field_access
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: entity_lookup
+      value_key: field_external_uri
+      source: field_access
+      bundle_key: vid
+      bundle: resource_types
+      entity_type: taxonomy_term
+      ignore_case: true
+  field_alternative_title: field_alternative_title
+  field_classification:
+    -
+      plugin: explode
+      source: field_classification
+      delimiter: '|'
+    -
+      plugin: deepen
+  # Ignored for now need to do some fancy parsing on the script side of things.
+  # field_coordinates: field_coordinates
+  field_coordinates_text:
+    -
+      plugin: explode
+      source: field_coordinates_text
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_edtf_date:
+    -
+      plugin: explode
+      source: field_edtf_date
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_edtf_date_created:
+    -
+      plugin: explode
+      source: field_edtf_date_created
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_edtf_date_issued:
+    -
+      plugin: explode
+      source: field_edtf_date_issued
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_description: field_description
+  field_dewey_classification:
+    -
+      plugin: explode
+      source: field_dewey_classification
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_edition:
+    -
+      plugin: explode
+      source: field_edition
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_extent:
+    -
+      plugin: explode
+      source: field_extent
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_genre:
+    -
+      plugin: explode
+      source: field_genre
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_genre
+      no_stub: true
+  field_geographic_subject:
+    -
+      plugin: explode
+      source: field_geographic_subject
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_geographic
+      no_stub: true
+  field_identifier:
+    -
+      plugin: explode
+      source: field_identifier
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_isbn:
+    -
+      plugin: explode
+      source: field_identifier
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_language:
+    -
+      plugin: explode
+      source: field_language
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_language
+      no_stub: true
+  field_lcc_classification:
+    -
+      plugin: explode
+      source: field_lcc_classification
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_linked_agent:
+    -
+      plugin: explode
+      source: field_linked_agent
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_person
+      no_stub: true
+  field_local_identifier:
+    -
+      plugin: explode
+      source: field_local_identifier
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_note:
+    -
+      plugin: explode
+      source: field_note
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_oclc_number:
+    -
+      plugin: explode
+      source: field_oclc_number
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_physical_form:
+    -
+      plugin: explode
+      source: field_physical_form
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_physical_form
+      no_stub: true
+  field_place_published:
+    -
+      plugin: explode
+      source: field_place_published
+      delimiter: '|'
+    -
+      plugin: deepen
+  field_resource_type:
+    plugin: entity_lookup
+    value_key: field_external_uri
+    source: field_resource_type
+    bundle_key: vid
+    bundle: resource_types
+    entity_type: taxonomy_term
+    ignore_case: true
+  field_rights:
+    -
+      plugin: explode
+      source: field_place_published
+      delimiter: '|'
+    -
+      plugin: deepen
+  # Although possible to combine taxonomies for 'Corporate Body', 'Family', 'Geographic Location', 'Person', and 'Subject'.
+  # According to the content type the fields aide from 'Subject' are covered by other fields.
+  # So we do no aggregation.
+  field_subject:
+    -
+      plugin: explode
+      source: field_geographic_subject
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_geographic
+      no_stub: true
+  # Should combine the taxonomies for 'Corporate Body', 'Family', and 'Person'.
+  field_subject_name:
+    plugin: merge_ignore_empty
+    source:
+      - '@temp_corporate'
+      - '@temp_family'
+      - '@temp_person'
+  field_table_of_contents: field_table_of_contents
+  field_temporal_subject:
+    -
+      plugin: explode
+      source: field_temporal_subject
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: migration_lookup
+      migration: fedora_temporal
+      no_stub: true
+destination:
+  plugin: 'entity:node'
+  overwrite_properties:
+    - field_alternative_title
+    - field_classification
+    - field_coordinates
+    - field_coordinates_text
+    - field_edtf_date
+    - field_edtf_date_created
+    - field_edtf_date_issued
+    - field_description
+    - field_dewey_classification
+    - field_edition
+    - field_extent
+    - field_genre
+    - field_geographic_subject
+    - field_identifier
+    - field_isbn
+    - field_language
+    - field_lcc_classification
+    - field_linked_agent
+    - field_local_identifier
+    - field_note
+    - field_oclc_number
+    - field_physical_form
+    - field_place_published
+    - field_resource_type
+    - field_rights
+    - field_subject
+    - field_subject_name
+    - field_table_of_contents
+    - field_temporal_subject
+migration_dependencies:
+  required:
+    - fedora_corporate
+    - fedora_family
+    - fedora_genre
+    - fedora_geographic
+    - fedora_language
+    - fedora_nodes
+    - fedora_person
+    - fedora_physical_form
+    - fedora_subject
+    - fedora_temporal
+  optional: { }

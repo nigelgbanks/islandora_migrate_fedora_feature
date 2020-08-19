@@ -1,0 +1,85 @@
+## Link Media Revisions to Files.
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_plus
+      - islandora
+id: fedora_media_revisions_files
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: fedora
+label: 'Media Revisions Files'
+source:
+  plugin: csv
+  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/media_revisions.csv
+  track_changes: true
+  header_row_count: 1 
+  keys:
+    - pid
+    - dsid
+    - version
+process:
+  vid:
+    plugin: migration_lookup
+    migration: fedora_media_revisions
+    source:
+      - pid
+      - dsid
+      - version
+  field_media_audio_file/target_id:
+    plugin: migration_lookup
+    migration: fedora_files
+    source:
+      - pid
+      - dsid
+      - version
+    no_stub: true
+  field_media_document/target_id:
+    plugin: migration_lookup
+    migration: fedora_files
+    source:
+      - pid
+      - dsid
+      - version
+    no_stub: true
+  field_media_file/target_id:
+    plugin: migration_lookup
+    migration: fedora_files
+    source:
+      - pid
+      - dsid
+      - version
+    no_stub: true
+  field_media_image/target_id:
+    plugin: migration_lookup
+    migration: fedora_files
+    source:
+      - pid
+      - dsid
+      - version
+    no_stub: true
+  field_media_video_file/target_id:
+    plugin: migration_lookup
+    migration: fedora_files
+    source:
+      - pid
+      - dsid
+      - version
+    no_stub: true
+destination:
+  plugin: 'entity_revision:media'
+  overwrite_properties:
+    - field_media_audio_file/target_id
+    - field_media_document/target_id
+    - field_media_file/target_id
+    - field_media_image/target_id
+    - field_media_video_file/target_id
+migration_dependencies:
+  required:
+    - fedora_media_revisions
+    - fedora_files
+  optional: { }

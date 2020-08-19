@@ -1,0 +1,46 @@
+## Link Media Revisions to Nodes.
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - migrate_plus
+      - islandora
+id: fedora_media_revisions_of
+class: null
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags: null
+migration_group: fedora
+label: 'Media Revisions Of'
+source:
+  plugin: csv
+  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/media_revisions.csv
+  track_changes: true
+  header_row_count: 1 
+  keys:
+    - pid
+    - dsid
+    - version
+process:
+  vid:
+    plugin: migration_lookup
+    migration: fedora_media_revisions
+    source:
+      - pid
+      - dsid
+      - version
+  field_media_of:
+    plugin: migration_lookup
+    migration: fedora_nodes
+    source: pid
+    no_stub: true
+destination:
+  plugin: 'entity_revision:media'
+  overwrite_properties:
+    - field_media_of
+migration_dependencies:
+  required:
+    - fedora_media_revisions
+    - fedora_nodes
+  optional: { }

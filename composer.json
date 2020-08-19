@@ -1,0 +1,15 @@
+{
+  "name": "islandora-lyrasis/islandora_migrate_fedora_feature",
+  "type": "drupal-module",
+  "description": "Feature for migrating from Fedora 3.x.",
+  "keywords": [
+    "Drupal",
+    "Islandora"
+  ],
+  "license": "GPL-2.0+",
+  "homepage": "https://github.com/lyrasis/islandora_migrate_fedora_feature",
+  "support": {
+    "issues": "https://github.com/lyrasis/islandora_migrate_fedora_feature/issues",
+    "source": "https://github.com/lyrasis/islandora_migrate_fedora_feature"
+  }
+}
