@@ -14,11 +14,11 @@ migration_group: fedora
 label: 'Geographic Taxonomy'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/geographic.csv
+  path: 'public://csv/geographic.csv'
   track_changes: true
   header_row_count: 1
   keys:
-    - name
+    - hash
 process:
   name: name
 destination:

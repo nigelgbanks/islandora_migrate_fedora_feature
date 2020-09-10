@@ -14,11 +14,11 @@ migration_group: fedora
 label: 'Physical Form Taxonomy'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/physical_form.csv
+  path: 'public://csv/physical_form.csv'
   track_changes: true
   header_row_count: 1
   keys:
-    - name
+    - hash
 process:
   name: name
 destination:

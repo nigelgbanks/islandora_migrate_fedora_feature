@@ -16,7 +16,7 @@ migration_group: fedora
 label: 'Media Date'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/media.csv
+  path: 'public://csv/media.csv'
   track_changes: true
   header_row_count: 1
   keys:

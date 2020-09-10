@@ -14,11 +14,11 @@ migration_group: fedora
 label: 'Person Taxonomy'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/person.csv
+  path: 'public://csv/person.csv'
   track_changes: true
   header_row_count: 1
   keys:
-    - name
+    - hash
 process:
   name: name
 destination:

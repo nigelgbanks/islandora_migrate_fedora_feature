@@ -14,11 +14,11 @@ migration_group: fedora
 label: 'Corporate Taxonomy'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/corporate.csv
+  path: 'public://csv/corporate.csv'
   track_changes: true
   header_row_count: 1
   keys:
-    - name
+    - hash
 process:
   name: name
 destination:

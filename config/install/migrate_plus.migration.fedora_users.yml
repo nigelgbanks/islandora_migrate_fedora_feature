@@ -13,11 +13,11 @@ migration_group: fedora
 label: 'Users'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/drupal/users.csv
+  path: 'public://csv/users.csv'
   track_changes: true
   header_row_count: 1
   keys:
-    - name
+    - hash
 process:
   name: name
   pass: pass

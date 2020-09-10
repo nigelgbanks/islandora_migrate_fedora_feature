@@ -14,7 +14,7 @@ migration_group: fedora
 label: 'Node Fields'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/fields.csv
+  path: 'public://csv/fields.csv'
   track_changes: true
   header_row_count: 1
   keys:

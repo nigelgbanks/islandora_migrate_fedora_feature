@@ -14,7 +14,7 @@ migration_group: fedora
 label: 'Media Revisions'
 source:
   plugin: csv
-  path: modules/contrib/islandora_migrate_fedora_feature/artifacts/fedora/media_revisions.csv
+  path: 'public://csv/media_revisions.csv'
   track_changes: true
   header_row_count: 1
   keys:
@@ -53,6 +53,11 @@ process:
   field_original_name: label
   field_media_image/alt: label
   field_media_image/title: label
+  # After upgrade to Drupal core this became required.
+  field_media_file/target:
+    -
+      plugin: default_value
+      default_value: null
   field_mime_type: mime_type
   field_media_use:
     -
