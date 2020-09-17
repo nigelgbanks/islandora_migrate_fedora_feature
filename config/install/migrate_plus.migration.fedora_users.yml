@@ -17,7 +17,7 @@ source:
   track_changes: true
   header_row_count: 1
   keys:
-    - hash
+    - name
 process:
   name: name
   pass: pass

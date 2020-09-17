@@ -25,40 +25,6 @@ process:
     migration: fedora_nodes
     source:
       - pid
-  # Temp properties referenced in field_subject_name, aggregate from multiple taxonomies.
-  temp_corporate:
-    -
-      plugin: explode
-      source: field_subject_name
-      delimiter: '|'
-    -
-      plugin: deepen
-    -
-      plugin: migration_lookup
-      migration: fedora_corporate
-      no_stub: true
-  temp_family:
-    -
-      plugin: explode
-      source: field_subject_name
-      delimiter: '|'
-    -
-      plugin: deepen
-    -
-      plugin: migration_lookup
-      migration: fedora_family
-      no_stub: true
-  temp_person:
-    -
-      plugin: explode
-      source: field_subject_name
-      delimiter: '|'
-    -
-      plugin: deepen
-    -
-      plugin: migration_lookup
-      migration: fedora_person
-      no_stub: true
   # Actual fields to set values on.
   field_access:
     -
@@ -68,13 +34,17 @@ process:
     -
       plugin: deepen
     -
-      plugin: entity_lookup
-      value_key: field_external_uri
-      source: field_access
-      bundle_key: vid
-      bundle: resource_types
-      entity_type: taxonomy_term
-      ignore_case: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: entity_lookup
+          value_key: field_external_uri
+          source: value
+          bundle_key: vid
+          bundle: resource_types
+          entity_type: taxonomy_term
+          ignore_case: true
+          no_stub: true
   field_alternative_title: field_alternative_title
   field_classification:
     -
@@ -143,9 +113,13 @@ process:
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_genre
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration: fedora_genre
+          no_stub: true
+          source: value
   field_geographic_subject:
     -
       plugin: explode
@@ -154,9 +128,13 @@ process:
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_geographic
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration: fedora_geographic
+          no_stub: true
+          source: value
   field_identifier:
     -
       plugin: explode
@@ -179,9 +157,13 @@ process:
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_language
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration: fedora_language
+          no_stub: true
+          source: value
   field_lcc_classification:
     -
       plugin: explode
@@ -197,9 +179,16 @@ process:
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_person
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration:
+            - fedora_corporate
+            - fedora_family
+            - fedora_person
+          no_stub: true
+          source: value
   field_local_identifier:
     -
       plugin: explode
@@ -229,9 +218,13 @@ process:
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_physical_form
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration: fedora_physical_form
+          no_stub: true
+          source: value
   field_place_published:
     -
       plugin: explode
@@ -254,27 +247,45 @@ process:
       delimiter: '|'
     -
       plugin: deepen
-  # Although possible to combine taxonomies for 'Corporate Body', 'Family', 'Geographic Location', 'Person', and 'Subject'.
-  # According to the content type the fields aide from 'Subject' are covered by other fields.
-  # So we do no aggregation.
   field_subject:
     -
       plugin: explode
-      source: field_geographic_subject
+      source: field_subject
       delimiter: '|'
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_geographic
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration:
+            - fedora_corporate
+            - fedora_family
+            - fedora_geographic
+            - fedora_person
+            - fedora_subject
+          no_stub: true
+          source: value
   # Should combine the taxonomies for 'Corporate Body', 'Family', and 'Person'.
-  field_subject_name:
-    plugin: merge_ignore_empty
-    source:
-      - '@temp_corporate'
-      - '@temp_family'
-      - '@temp_person'
+  field_subjects_name:
+    -
+      plugin: explode
+      source: field_subject
+      delimiter: '|'
+    -
+      plugin: deepen
+    -
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration:
+            - fedora_corporate
+            - fedora_family
+            - fedora_person
+          no_stub: true
+          source: value
   field_table_of_contents: field_table_of_contents
   field_temporal_subject:
     -
@@ -284,9 +295,13 @@ process:
     -
       plugin: deepen
     -
-      plugin: migration_lookup
-      migration: fedora_temporal
-      no_stub: true
+      plugin: sub_process
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration: fedora_temporal
+          no_stub: true
+          source: value
 destination:
   plugin: 'entity:node'
   overwrite_properties:
@@ -316,7 +331,7 @@ destination:
     - field_resource_type
     - field_rights
     - field_subject
-    - field_subject_name
+    - field_subjects_name
     - field_table_of_contents
     - field_temporal_subject
 migration_dependencies:
