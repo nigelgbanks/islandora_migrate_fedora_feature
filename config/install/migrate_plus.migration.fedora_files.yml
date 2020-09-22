@@ -4,7 +4,6 @@ dependencies:
   enforced:
     module:
       - migrate_plus
-      - islandora
 id: fedora_files
 class: null
 field_plugin_method: null
@@ -25,11 +24,6 @@ source:
     DRUPAL_FILE_DIRECTORY: 'public://fedora'
 process:
   filename: name
-  normalized_pid:
-    plugin: str_replace
-    source: pid
-    search: ["%3A"]
-    replace: ["-"]
   uid:
     -
       plugin: migration_lookup

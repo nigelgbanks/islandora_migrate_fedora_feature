@@ -4,7 +4,6 @@ dependencies:
   enforced:
     module:
       - migrate_plus
-      - islandora
 id: fedora
 label: 'Fedora Objects'
 description: 'Migration configuration for migrating from Fedora 3 Repository'
